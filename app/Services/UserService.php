@@ -38,17 +38,11 @@ class UserService
         $request = request();
 
         if ($user->email_verified_at === null) {
-            if ($user->verify_code == $request->verify_code) {
-                $user->update([
-                    $user->email_verified_at = now(),
-                    $user->verify_code = 'done'
-                ]);
-
-            } else {
-                return response()->json('Check email or resend the letter');
-            }
+            $user->email_verified_at = now();
         }
 
+        $user->verify_code = 'done';
+        $user->save();
         $data = UserResource::make($user)->toArray($request) +
             ['access_token' => $user->createToken('api')->plainTextToken];
 

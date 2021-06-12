@@ -20,7 +20,6 @@ class RegisterRequest extends FormRequest
             'birthDay'=>'string|min:4|max:10',
             'age'=>'numeric|min:5|max:150',
             'email'=>'email|unique:users|required',
-            'password'=>'string|min:6|max:20',
             'country'=>['string', 'min:2', 'max:20'],
             'city'=>'string|min:2|max:50',
             'mobile'=>'string|min:10|max:15',

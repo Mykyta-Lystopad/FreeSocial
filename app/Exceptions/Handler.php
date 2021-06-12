@@ -2,11 +2,29 @@
 
 namespace App\Exceptions;
 
-use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use App;
+use Exception;
+use Symfony\Component\{HttpFoundation\Response,
+    HttpKernel\Exception\MethodNotAllowedHttpException,
+    HttpKernel\Exception\NotFoundHttpException,
+    HttpKernel\Exception\UnauthorizedHttpException
+};
 use Throwable;
+use Illuminate\{Auth\AuthenticationException,
+    Foundation\Exceptions\Handler as ExceptionHandler,
+    Http\JsonResponse,
+    Http\Request,
+    Validation\ValidationException,
+    Auth\Access\AuthorizationException,
+    Database\Eloquent\ModelNotFoundException
+};
+
 
 class Handler extends ExceptionHandler
 {
+    public const MESSAGE_VAR = 'message';
+    public const ERRORS_VAR = 'errors';
+
     /**
      * A list of the exception types that are not reported.
      *
@@ -22,20 +40,77 @@ class Handler extends ExceptionHandler
      * @var array
      */
     protected $dontFlash = [
-        'current_password',
         'password',
         'password_confirmation',
     ];
 
     /**
-     * Register the exception handling callbacks for the application.
+     * Report or log an exception.
      *
+     * @param Throwable $exception
      * @return void
+     *
+     * @throws Exception
      */
-    public function register()
+    public function report(Throwable $exception)
     {
-        $this->reportable(function (Throwable $e) {
-            //
-        });
+        parent::report($exception);
+    }
+
+    /**
+     * Render an exception into an HTTP response.
+     *
+     * @param Request $request
+     * @param Throwable $exception
+     * @return Response | JsonResponse
+     *
+     * @throws Throwable
+     */
+    public function render($request, Throwable $exception)
+    {
+        if ($request->is('api/*') || $request->wantsJson()) {
+            $response = [
+                'success' => false,
+                self::MESSAGE_VAR => null,
+                self::ERRORS_VAR => null
+            ];
+            $errors = null;
+            if ($exception instanceof ValidationException) {
+                $message = __('system.422');
+                $errors = $exception->errors();
+                $statusCode = 422;
+            } elseif ($exception instanceof UnauthorizedHttpException or $exception instanceof AuthenticationException) {
+                $message = __('system.401');
+                $statusCode = 401;
+            } elseif ($exception instanceof AuthorizationException) {
+                $message = __('system.403');
+                $statusCode = 403;
+            } elseif ($exception instanceof ModelNotFoundException or $exception instanceof NotFoundHttpException) {
+                $message = __('system.404');
+                $statusCode = 404;
+            } elseif ($exception instanceof MethodNotAllowedHttpException) {
+                $message = __('system.405');
+                $statusCode = 405;
+            } else {
+                $statusCode = method_exists($exception, 'getStatusCode')
+                    ? $exception->getStatusCode() : 500;
+                $message = $exception->getMessage();
+
+                // more info in debug mode
+                if (config('app.debug')) {
+                    $debug['type'] = class_basename($exception);
+                    $debug['file'] = $exception->getFile();
+                    $debug['line'] = $exception->getLine();
+                    $debug['trace'] = $exception->getTrace()
+                        ?: explode(PHP_EOL, $exception->getTraceAsString());
+                    $response['debug'] = $debug;
+                }
+            }
+            $response[self::MESSAGE_VAR] = $message;
+            $response[self::ERRORS_VAR] = $errors;
+
+            return response()->json($response, $statusCode);
+        }
+        return parent::render($request, $exception);
     }
 }

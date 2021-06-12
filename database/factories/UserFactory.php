@@ -30,7 +30,6 @@ class UserFactory extends Factory
             'email' => $this->faker->unique()->safeEmail,
             'verify_code'=> 'done',
             'email_verified_at' => now(),
-            'password' => 123456,
             'mobile' => $this->faker->phoneNumber,
             'country'=> 'Україна',
             'city'=> $this->faker->city,

@@ -8,9 +8,10 @@ use Illuminate\Support\Facades\Route;
 
 
 // for authentication
-Route::post('register', [AuthController::class, 'register'])->name('register');
+Route::post('register', [AuthController::class, 'register']);
 
-Route::post('login', [AuthController::class, 'login'])->name('login');
+Route::post('verify_code', [AuthController::class, 'verifyCode']);
+Route::post('login', [AuthController::class, 'login']);
 
 
 

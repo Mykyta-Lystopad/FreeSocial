@@ -22,7 +22,6 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('verify_code');
-            $table->string('password')->default('123456');
             $table->string('country')->default('Україна');
             $table->string('city')->default('Полтава');
             $table->string('mobile')->default('380*********');
