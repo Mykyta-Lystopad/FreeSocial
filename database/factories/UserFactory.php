@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 
 class UserFactory extends Factory
 {
@@ -25,7 +24,8 @@ class UserFactory extends Factory
         return [
             'first_name' => $this->faker->firstName,
             'last_name' => $this->faker->lastName,
-            'birthDay'=> mt_rand(1950, 2021),
+            'birthDay'=>  $this->faker->dateTimeBetween('1990-01-01', '2012-12-31')
+                ->format('Y-m-d'),
             'age'=> mt_rand(18, 90),
             'email' => $this->faker->unique()->safeEmail,
             'verify_code'=> 'done',

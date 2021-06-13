@@ -59,7 +59,6 @@ class AuthController extends Controller
     /**
      * @param LoginRequest $request
      * @return JsonResponse
-     * @throws ValidationException
      */
     public function verifyCode(LoginRequest $request) :JsonResponse
     {

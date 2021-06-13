@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Http\Resources\UserResource;
 use App\Services\UserService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Carbon;
 
 /**
  * Class UserController
@@ -46,6 +47,7 @@ class UserController extends Controller
      */
     public function update(UpdateRequest $request, User $user)
     {
+        $user->age = Carbon::parse($request->birthDay)->diffInYears(\Carbon\Carbon::now());
 
         $user->update($request->validated());
         return $this->success(new UserResource($user));

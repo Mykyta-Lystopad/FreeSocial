@@ -17,8 +17,8 @@ class UserSeeder extends Seeder
         User::factory()->create([
             'first_name'=>'Никита',
             'last_name'=>'Листопад',
-            'birthDay'=> '1987',
-            'age'=> 0,
+            'birthDay'=> '1987-07-07',
+            'age'=> 33,
             'email'=>'niko-liko0@rambler.ru',
             'city'=>'Полтава',
             'mobile' => '38066*****38',
@@ -29,8 +29,8 @@ class UserSeeder extends Seeder
         User::factory()->create([
             'first_name'=>'Ваня',
             'last_name'=>'Кочерга',
-            'birthDay'=> '2006',
-            'age'=> 0,
+            'birthDay'=> '2006-01-31',
+            'age'=> 15,
             'email'=>'vanRun@gmail.com',
             'city'=>'Полтава',
             'mobile' => '38066*****03',
