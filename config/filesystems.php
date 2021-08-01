@@ -29,11 +29,17 @@ return [
     */
 
     'disks' => [
-
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app'),
         ],
+
+//        'avatar' => [
+//            'driver' => 'local',
+//            'root' => storage_path('avatars'),
+//            'url' => env('APP_URL').'/storage',
+//            'visibility' => 'public',
+//        ],
 
         'public' => [
             'driver' => 'local',

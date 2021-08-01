@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\User;
+use File;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class UserFactory extends Factory
@@ -21,7 +22,17 @@ class UserFactory extends Factory
      */
     public function definition()
     {
+//        $filepath = storage_path('images');
+//
+//        if(!File::exists($filepath)) {
+//            File::makeDirectory($filepath);
+//
+//        }
+//        $filepath = storage_path('images');
         return [
+//            'avatar'=> $this->faker->image($filepath,640,480, null, false),
+//            'avatar'=> 'C:\OpenServer\domains\backEnd\storage\avatars\default_avatar.png',
+            'avatar'=> 'http://nikita-listopad-portfolio.pp.ua/FreeSocial/storage/avatars/default_avatar.png',
             'first_name' => $this->faker->firstName,
             'last_name' => $this->faker->lastName,
             'birthDay'=>  $this->faker->dateTimeBetween('1990-01-01', '2012-12-31')

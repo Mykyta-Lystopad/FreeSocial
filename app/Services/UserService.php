@@ -3,8 +3,9 @@
 
 namespace App\Services;
 
-use App\Http\Resources\UserResource;
+use App\Http\Resources\User\UserResource;
 use App\Models\User;
+
 
 /**
  * Class UserService

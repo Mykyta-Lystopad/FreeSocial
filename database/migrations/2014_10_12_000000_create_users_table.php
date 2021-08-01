@@ -15,10 +15,14 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+//            $table->string('file_name')->default('Test file-name');
+//            $table->string('comment')->nullable();
+            $table->TEXT('avatar')->nullable();
+//            $table->TEXT('avatar')->comment('http://nikita-listopad-portfolio.pp.ua/FreeSocial/storage/avatars/default_avatar.png');
             $table->string('first_name')->default('Name');
             $table->string('last_name')->default('Surname');
             $table->Integer('age')->default(0);
-            $table->string('birthDay')->default('2000');
+            $table->string('birthDay')->default('2000-10-10');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('verify_code');

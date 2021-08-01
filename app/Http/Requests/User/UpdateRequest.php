@@ -14,6 +14,7 @@ class UpdateRequest extends FormRequest
     public function rules()
     {
         return [
+            'avatar'=>'string|min:20',
             'first_name'=>'string|min:2|max:50|required',
             'last_name'=>'string|min:2|max:50',
             'birthDay'=>'string|min:4|max:10',

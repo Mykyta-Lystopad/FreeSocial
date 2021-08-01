@@ -2,84 +2,79 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Event\StoreRequest;
+use App\Http\Requests\Event\UpdateRequest;
+use App\Http\Resources\Event\EventResource;
 use App\Models\Event;
+use App\Services\EventService;
 use Illuminate\Http\Request;
 
 class EventController extends Controller
 {
+
+    private $eventService;
+
+    public function __construct(eventService $eventService)
+    {
+        $this->eventService = $eventService;
+    }
+
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
-        //
+        $events = $this->eventService->searchEvents();
+        $check = EventResource::collection($events);
+//        dd($check);
+        return $this->success(EventResource::collection($events));
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Event  $event
-     * @return \Illuminate\Http\Response
+     * @param Event $event
+     * @return \Illuminate\Http\JsonResponse
      */
     public function show(Event $event)
     {
-        //
+        return $this->success(new EventResource($event));
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Event  $event
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
      */
-    public function edit(Event $event)
+    public function store(StoreRequest $request)
     {
-        //
+        $user = auth()->user();
+        $event = $user->events()->create($request->validated());
+        $event->eventImages = $this->eventService->saveImages($request->eventImages);
+        $event->save();
+
+        return $this->created(new EventResource($event));
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Event  $event
-     * @return \Illuminate\Http\Response
+     * @param UpdateRequest $request
+     * @param Event $event
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, Event $event)
+    public function update(UpdateRequest $request, Event $event)
     {
-        //
+        $event->update($request->validated());
+        $event->eventImages = $this->eventService->saveImages($request->eventImages);
+        $event->save();
+
+        return $this->success(new EventResource($event));
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Event  $event
-     * @return \Illuminate\Http\Response
+     * @param Event $event
+     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(Event $event)
     {
-        //
+        $event->delete();
+        return $this->deleted();
     }
 }

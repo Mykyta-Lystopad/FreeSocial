@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
-//use App\Http\Requests\User\UpdateRequest;
 use App\Http\Requests\User\UpdateRequest;
+use App\Http\Resources\User\UserResource;
 use App\Models\User;
-use App\Http\Resources\UserResource;
+use App\Services\EventService;
 use App\Services\UserService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
+use Symfony\Component\HttpFoundation\File\File;
 
 /**
  * Class UserController
@@ -18,11 +20,21 @@ class UserController extends Controller
 {
 
     private $userService;
+    private $eventService;
 
-    public function __construct(UserService $userService)
+    /**
+     * UserController constructor.
+     * @param UserService $userService
+     * @param EventService $eventService
+     */
+    public function __construct(
+        UserService $userService,
+        EventService $eventService
+    )
     {
         $this->authorizeResource(User::class);
         $this->userService = $userService;
+        $this->eventService = $eventService;
     }
 
     /**
@@ -47,6 +59,8 @@ class UserController extends Controller
      */
     public function update(UpdateRequest $request, User $user)
     {
+        $user->avatar = $this->eventService->saveImages($request->avatar);
+
         $user->age = Carbon::parse($request->birthDay)->diffInYears(\Carbon\Carbon::now());
 
         $user->update($request->validated());
